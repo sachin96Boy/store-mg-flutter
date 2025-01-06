@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ShadBlueColorScheme.light(
           primary: Colors.cyan[400]!,
           secondary: Colors.deepOrangeAccent,
-          foreground: Colors.white,
-          background: Colors.grey[600]!,
+          // foreground: Colors.white,
+          // background: Colors.grey[600]!,
         ),
         brightness: Brightness.light,
       ),

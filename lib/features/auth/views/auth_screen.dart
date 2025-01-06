@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+enum AuthMode { login, register }
+
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
@@ -9,6 +11,46 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  var _username = '', _email = '', _password = '';
+
+  var _authMode = AuthMode.register;
+
+  void _submitForm() {
+    final validate = _formKey.currentState!.validate();
+
+    if (!validate) {
+      return;
+    }
+
+    _formKey.currentState!.save();
+
+    print('Username: $_username');
+    print('Email: $_email');
+    print('Password: $_password');
+  }
+
+  void _switchAuthMode() {
+    _formKey.currentState!.reset();
+    if (_authMode == AuthMode.register) {
+      setState(() {
+        _authMode = AuthMode.login;
+      });
+    } else {
+      setState(() {
+        _authMode = AuthMode.register;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _formKey.currentState!.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,27 +62,51 @@ class _AuthScreenState extends State<AuthScreen> {
         child: Center(
           child: SingleChildScrollView(
             child: Form(
+              key: _formKey,
               child: Column(
                 spacing: 20.0,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Register',
+                    _authMode == AuthMode.register ? 'Register' : 'Login',
                     style: ShadTheme.of(context).textTheme.h1Large,
                   ),
+                  _authMode == AuthMode.register
+                      ? TextFormField(
+                          onSaved: (newValue) {
+                            _username = newValue!;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your username';
+                            }
+                            return null;
+                          },
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'UserName',
+                            hintText: 'Enter your username',
+                            icon: Icon(
+                              Icons.face,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        )
+                      : SizedBox(),
                   TextFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'UserName',
-                      hintText: 'Enter your username',
-                      icon: Icon(
-                        Icons.face,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  TextFormField(
+                    onSaved: (newValue) {
+                      _email = newValue!;
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (value.contains('@') == false) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Email',
@@ -52,6 +118,18 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                   TextFormField(
+                    onSaved: (newValue) {
+                      _password = newValue!;
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
+                    },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Passwod',
@@ -66,19 +144,38 @@ class _AuthScreenState extends State<AuthScreen> {
                   Column(
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _submitForm,
                         style: ElevatedButton.styleFrom(
                           elevation: 8.0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
                           ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0,
+                            vertical: 10.0,
+                          ),
+                          backgroundColor: _authMode == AuthMode.register
+                              ? ShadTheme.of(context).colorScheme.secondary
+                              : ShadTheme.of(context).colorScheme.primary,
                         ),
-                        child: const Text('Register'),
+                        child: Text(
+                          _authMode == AuthMode.register ? 'Register' : 'Login',
+                          style: ShadTheme.of(context).textTheme.h3,
+                        ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: _switchAuthMode,
                         child: Text(
-                          'Already Registeded? Log In',
+                          _authMode == AuthMode.register
+                              ? 'Already Registeded? Log In'
+                              : 'New User? Register',
+                          style: ShadTheme.of(context).textTheme.h3.copyWith(
+                                color: _authMode == AuthMode.login
+                                    ? ShadTheme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                    : ShadTheme.of(context).colorScheme.primary,
+                              ),
                         ),
                       ),
                     ],
