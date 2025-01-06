@@ -14,7 +14,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
 
   var _username = '', _email = '', _password = '';
-
+  bool isObscure = true;
   var _authMode = AuthMode.register;
 
   void _submitForm() {
@@ -42,6 +42,12 @@ class _AuthScreenState extends State<AuthScreen> {
         _authMode = AuthMode.register;
       });
     }
+  }
+
+  void _toggleObscure() {
+    setState(() {
+      isObscure = !isObscure;
+    });
   }
 
   @override
@@ -130,7 +136,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       }
                       return null;
                     },
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Passwod',
                       hintText: 'Enter your password',
@@ -138,8 +144,15 @@ class _AuthScreenState extends State<AuthScreen> {
                         Icons.lock,
                         color: Colors.grey,
                       ),
+                      suffixIcon: GestureDetector(
+                        onTap: _toggleObscure,
+                        child: Icon(
+                          isObscure ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ),
-                    obscureText: true,
+                    obscureText: isObscure,
                   ),
                   Column(
                     children: [
