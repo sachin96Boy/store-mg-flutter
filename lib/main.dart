@@ -3,6 +3,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:store_mg_fl/features/auth/views/auth_screen.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:store_mg_fl/features/auth/views/otp_screen.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,9 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
       ),
       home: const AuthScreen(),
+      routes: {
+        OtpScreen.routeName: (context) => const OtpScreen(),
+      },
     );
   }
 }

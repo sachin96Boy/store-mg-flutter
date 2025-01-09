@@ -9,6 +9,8 @@ enum AuthMode { login, register }
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
+  static const routeName = '/auth';
+
   @override
   State<AuthScreen> createState() => _AuthScreenState();
 }
@@ -42,6 +44,8 @@ class _AuthScreenState extends State<AuthScreen> {
       // Login
       authService.signInWithEmailAndPassword(_email, _password);
     }
+
+    // Navigator.of(context).pushNamed(OtpScreen.routeName);
   }
 
   void _switchAuthMode() {

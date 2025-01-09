@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:store_mg_fl/common/utils/api_interceptor.dart';
 import 'package:store_mg_fl/common/utils/apis.dart';
+
+import 'package:http/http.dart' as http;
 
 class AuthRepository {
   Client client = InterceptedClient.build(interceptors: [
@@ -12,10 +16,12 @@ class AuthRepository {
     try {
       final loginUrl = Uri.parse(Api.login);
 
-      final response = await client
+      final response = await http
           .post(loginUrl, body: {'identifier': email, 'password': password});
 
-      final body = response.body as Map<String, dynamic>;
+      print(response.body);
+
+      final body = json.decode(response.body) as Map<String, dynamic>;
 
       if (response.statusCode == 200) {
         // Save token to shared pref
@@ -24,10 +30,10 @@ class AuthRepository {
         await asyncPrefs.setString('token', body['jwt']);
 
         // Save refresh token
-        await asyncPrefs.setString('refreshToken', body['refreshToken']);
+        // await asyncPrefs.setString('refreshToken', body['refreshToken']);
 
         // Save user data
-        await asyncPrefs.setString('user', body['user']);
+        await asyncPrefs.setString('user', body['user']['documentId']);
       }
     } on Exception catch (e) {
       print(e);
@@ -39,10 +45,11 @@ class AuthRepository {
     try {
       final regUrl = Uri.parse(Api.register);
 
-      final response = await client.post(regUrl,
+      final response = await http.post(regUrl,
           body: {'email': email, 'password': password, 'username': userName});
 
-      final body = response.body as Map<String, dynamic>;
+      print(response.body);
+      final body = json.decode(response.body) as Map<String, dynamic>;
 
       if (response.statusCode == 200) {
         // Save token to shared pref
@@ -51,10 +58,10 @@ class AuthRepository {
         await asyncPrefs.setString('token', body['jwt']);
 
         // Save refresh token
-        await asyncPrefs.setString('refreshToken', body['refreshToken']);
+        // await asyncPrefs.setString('refreshToken', body['refreshToken']);
 
         // Save user data
-        await asyncPrefs.setString('user', body['user']);
+        await asyncPrefs.setString('user', body['user']['documentId']);
       }
     } on Exception catch (e) {
       print(e);
