@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import 'package:store_mg_fl/features/auth/repository/auth_repository.dart';
+import 'package:store_mg_fl/features/auth/services/auth_service.dart';
+
 enum AuthMode { login, register }
 
 class AuthScreen extends StatefulWidget {
@@ -29,6 +32,16 @@ class _AuthScreenState extends State<AuthScreen> {
     print('Username: $_username');
     print('Email: $_email');
     print('Password: $_password');
+
+    final authService = AuthService(authRepository: AuthRepository());
+
+    if (_authMode == AuthMode.register) {
+      // Register
+      authService.signUpWithEmailAndPassword(_email, _password, _username);
+    } else {
+      // Login
+      authService.signInWithEmailAndPassword(_email, _password);
+    }
   }
 
   void _switchAuthMode() {
