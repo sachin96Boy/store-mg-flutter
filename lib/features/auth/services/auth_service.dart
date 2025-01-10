@@ -1,3 +1,5 @@
+import 'package:store_mg_fl/features/auth/dto/auth_dto.dart';
+import 'package:store_mg_fl/features/auth/dto/auth_response.dart';
 import 'package:store_mg_fl/features/auth/repository/auth_repository.dart';
 
 class AuthService {
@@ -6,14 +8,20 @@ class AuthService {
     required this.authRepository,
   });
 
-  Future<void> signInWithEmailAndPassword(String email, String password) async {
-    await authRepository.signInWithEmailAndPassword(email, password);
+  Future<AuthResponse> signInWithEmailAndPassword(
+      String email, String password) async {
+    final authDto = AuthDto(email: email, password: password);
+    final response = await authRepository.signInWithEmailAndPassword(authDto);
+
+    return response;
   }
 
-  Future<void> signUpWithEmailAndPassword(
+  Future<AuthResponse> signUpWithEmailAndPassword(
       String email, String password, String userName) async {
-    await authRepository.signUpWithEmailAndPassword(email, password, userName);
+    final authDto =
+        AuthDto(email: email, password: password, username: userName);
+    final response = await authRepository.signUpWithEmailAndPassword(authDto);
 
-    // redirect user to otp screen
+    return response;
   }
 }
