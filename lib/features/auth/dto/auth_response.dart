@@ -1,8 +1,10 @@
+import 'package:store_mg_fl/features/auth/models/user_model.dart';
+
 class AuthResponse {
   final String token;
-  final String? refreshToken;
-  final Map<String, dynamic>? user;
   String status;
+  final String? refreshToken;
+  final UserModel? user;
   String? message;
 
   AuthResponse(
@@ -16,7 +18,7 @@ class AuthResponse {
     return AuthResponse(
       token: json['jwt'] ?? '',
       refreshToken: json['refreshToken'],
-      user: json['user'],
+      user: UserModel.fromJson(json['user']),
       status: json['status'] ?? 'success',
       message: json['message'] ?? '',
     );

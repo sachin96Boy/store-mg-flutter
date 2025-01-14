@@ -23,7 +23,7 @@ class ApiInterceptor implements InterceptorContract {
       request.headers[HttpHeaders.contentTypeHeader] = "application/json";
       request.headers[HttpHeaders.authorizationHeader] = "Bearer $token";
     } catch (e) {
-      print(e);
+      throw Exception(e);
     }
     return request;
   }
@@ -36,7 +36,7 @@ class ApiInterceptor implements InterceptorContract {
     if (response.statusCode == 401) {
       final token = await sharedprefAsync.getString('token');
 
-      if (token != null) {
+      if (token == null) {
         // Refresh token
         final refreshToken = await sharedprefAsync.getString('refreshToken');
 

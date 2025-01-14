@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:store_mg_fl/common/components/snackbar.dart';
+import 'package:store_mg_fl/features/auth/dto/auth_response.dart';
 
-import 'package:store_mg_fl/features/auth/repository/auth_repository.dart';
 import 'package:store_mg_fl/features/auth/services/auth_service.dart';
 import 'package:store_mg_fl/features/products/views/products_screen.dart';
 
 enum AuthMode { login, register }
 
-class AuthScreen extends StatefulWidget {
+class AuthScreen extends StatefulHookConsumerWidget {
   const AuthScreen({super.key});
 
   static const routeName = '/auth';
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  ConsumerState<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends ConsumerState<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final scaffoleKey = GlobalKey<ScaffoldState>();
@@ -44,7 +45,16 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  void _submitForm() {
+  void _handleSuccess(String message) {
+    CustomSnackBarBuilder.showSuccessSnackBar(message, context);
+    _redirect();
+  }
+
+  void _handleError(String message) {
+    CustomSnackBarBuilder.showErroeSnackBar(message, context);
+  }
+
+  void _submitForm() async {
     handleLoading();
 
     final validate = _formKey.currentState!.validate();
@@ -56,52 +66,29 @@ class _AuthScreenState extends State<AuthScreen> {
 
     _formKey.currentState!.save();
 
-    final authService = AuthService(authRepository: AuthRepository());
-
     try {
+      AuthResponse response;
+
       if (_authMode == AuthMode.register) {
         // Register
-        authService
-            .signUpWithEmailAndPassword(_email, _password, _username)
-            .then(
-          (value) {
-            if (value.status == 'success') {
-              CustomSnackBarBuilder.showSuccessSnackBar(
-                'Registration Successful',
-                context,
-              );
-              _redirect();
-            } else {
-              CustomSnackBarBuilder.showErroeSnackBar(
-                value.message!,
-                context,
-              );
-            }
-          },
-        );
+        response = await ref
+            .read(authServiceProvider.notifier)
+            .signUpWithEmailAndPassword(_email, _password, _username);
       } else {
         // Login
-        authService.signInWithEmailAndPassword(_email, _password).then((value) {
-          if (value.status == 'success') {
-            CustomSnackBarBuilder.showSuccessSnackBar(
-              'Login Successful',
-              context,
-            );
-            _redirect();
-          } else {
-            CustomSnackBarBuilder.showErroeSnackBar(
-              value.message!,
-              context,
-            );
-          }
-        });
+        response = await ref
+            .read(authServiceProvider.notifier)
+            .signInWithEmailAndPassword(_email, _password);
+      }
+
+      if (response.status == 'success') {
+        _handleSuccess(response.message ?? 'Operation Successful');
+      } else {
+        _handleError(response.message ?? 'An error occurred');
       }
     } catch (e) {
       print(e);
-      CustomSnackBarBuilder.showErroeSnackBar(
-        e.toString(),
-        context,
-      );
+      _handleError(e.toString());
     } finally {
       _formKey.currentState!.reset();
       handleLoading();

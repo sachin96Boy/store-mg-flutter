@@ -1,15 +1,17 @@
 import 'dart:convert';
 
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:store_mg_fl/common/utils/api_interceptor.dart';
 import 'package:store_mg_fl/common/utils/apis.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:store_mg_fl/features/auth/dto/auth_dto.dart';
 import 'package:store_mg_fl/features/auth/dto/auth_response.dart';
+import 'package:store_mg_fl/features/auth/providers/auth_provider.dart';
 
-class AuthRepository {
+class AuthRepository extends Notifier<AsyncValue<dynamic>> {
   Client client = InterceptedClient.build(interceptors: [
     ApiInterceptor(),
   ]);
@@ -27,16 +29,8 @@ class AuthRepository {
 
       if (response.statusCode == 200) {
         final authResponse = AuthResponse.fromJson(body);
-        // Save token to shared pref
 
-        final asyncPrefs = SharedPreferencesAsync();
-        await asyncPrefs.setString('token', body['jwt']);
-
-        // Save refresh token
-        // await asyncPrefs.setString('refreshToken', body['refreshToken']);
-
-        // Save user data
-        await asyncPrefs.setString('user', body['user']['documentId']);
+        ref.read(authResponseProvider.notifier).setResponse(authResponse);
 
         authResponse.message = 'Login Successful';
 
@@ -45,12 +39,15 @@ class AuthRepository {
 
       final authResponse = AuthResponse.fromJson(body);
 
+      ref.read(authResponseProvider.notifier).setResponse(authResponse);
+
       authResponse.status = 'error';
       authResponse.message = 'Invalid Credentials';
       return authResponse;
     } on Exception catch (e) {
       print(e);
-      return AuthResponse(status: 'error', token: '', message: e.toString());
+      throw Exception(e.toString());
+      // return AuthResponse(status: 'error', token: '', message: e.toString());
     }
   }
 
@@ -68,16 +65,8 @@ class AuthRepository {
 
       if (response.statusCode == 200) {
         final authResponse = AuthResponse.fromJson(body);
-        // Save token to shared pref
 
-        final asyncPrefs = SharedPreferencesAsync();
-        await asyncPrefs.setString('token', body['jwt']);
-
-        // Save refresh token
-        // await asyncPrefs.setString('refreshToken', body['refreshToken']);
-
-        // Save user data
-        await asyncPrefs.setString('user', body['user']['documentId']);
+        ref.read(authResponseProvider.notifier).setResponse(authResponse);
 
         authResponse.message = 'Registration Successful';
 
@@ -86,12 +75,26 @@ class AuthRepository {
 
       final authResponse = AuthResponse.fromJson(body);
 
+      ref.read(authResponseProvider.notifier).setResponse(authResponse);
+
       authResponse.status = 'error';
-      authResponse.message = 'Invalid Credentials';
+      authResponse.message = body['message'] as String;
       return authResponse;
     } on Exception catch (e) {
       print(e);
-      return AuthResponse(status: 'error', token: '', message: e.toString());
+      throw Exception(e.toString());
+      // return AuthResponse(status: 'error', token: '', message: e.toString());
     }
   }
+
+  @override
+  AsyncValue build() {
+    // TODO: implement build
+    return AsyncValue.data(null);
+  }
 }
+
+final authRepositoryProvider =
+    NotifierProvider<AuthRepository, AsyncValue<dynamic>>(() {
+  return AuthRepository();
+});
