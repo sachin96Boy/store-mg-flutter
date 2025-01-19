@@ -1,9 +1,6 @@
 import 'dart:convert';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:http_interceptor/http_interceptor.dart';
-
-import 'package:store_mg_fl/common/utils/api_interceptor.dart';
 import 'package:store_mg_fl/common/utils/apis.dart';
 
 import 'package:http/http.dart' as http;
@@ -12,10 +9,6 @@ import 'package:store_mg_fl/features/auth/dto/auth_response.dart';
 import 'package:store_mg_fl/features/auth/providers/auth_provider.dart';
 
 class AuthRepository extends Notifier<AsyncValue<dynamic>> {
-  Client client = InterceptedClient.build(interceptors: [
-    ApiInterceptor(),
-  ]);
-
   Future<AuthResponse> signInWithEmailAndPassword(AuthDto authDto) async {
     try {
       final loginUrl = Uri.parse(Api.login);
@@ -24,8 +17,6 @@ class AuthRepository extends Notifier<AsyncValue<dynamic>> {
           body: {'identifier': authDto.email, 'password': authDto.password});
 
       final body = json.decode(response.body) as Map<String, dynamic>;
-
-      print(body);
 
       if (response.statusCode == 200) {
         final authResponse = AuthResponse.fromJson(body);
@@ -37,12 +28,12 @@ class AuthRepository extends Notifier<AsyncValue<dynamic>> {
         return authResponse;
       }
 
-      final authResponse = AuthResponse.fromJson(body);
+      final authResponse = AuthResponse(token: '');
 
       ref.read(authResponseProvider.notifier).setResponse(authResponse);
 
       authResponse.status = 'error';
-      authResponse.message = 'Invalid Credentials';
+      authResponse.message = body['error']['message'];
       return authResponse;
     } on Exception catch (e) {
       print(e);
@@ -73,12 +64,12 @@ class AuthRepository extends Notifier<AsyncValue<dynamic>> {
         return authResponse;
       }
 
-      final authResponse = AuthResponse.fromJson(body);
+      final authResponse = AuthResponse(token: '');
 
       ref.read(authResponseProvider.notifier).setResponse(authResponse);
 
       authResponse.status = 'error';
-      authResponse.message = body['message'] as String;
+      authResponse.message = body['error']['message'] as String;
       return authResponse;
     } on Exception catch (e) {
       print(e);
