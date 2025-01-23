@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:store_mg_fl/common/components/app_bar_user.dart';
 import 'package:store_mg_fl/common/styles/styles.dart';
-import 'package:store_mg_fl/features/auth/models/user_model.dart';
-import 'package:store_mg_fl/features/auth/providers/auth_provider.dart';
 
 class ProductsScreen extends StatefulHookConsumerWidget {
   static const routeName = '/products';
