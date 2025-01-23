@@ -8,7 +8,7 @@ import 'package:store_mg_fl/features/auth/dto/auth_dto.dart';
 import 'package:store_mg_fl/features/auth/dto/auth_response.dart';
 import 'package:store_mg_fl/features/auth/providers/auth_provider.dart';
 
-class AuthRepository extends Notifier<AsyncValue<dynamic>> {
+class AuthRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
   Future<AuthResponse> signInWithEmailAndPassword(AuthDto authDto) async {
     try {
       final loginUrl = Uri.parse(Api.login);
@@ -86,6 +86,6 @@ class AuthRepository extends Notifier<AsyncValue<dynamic>> {
 }
 
 final authRepositoryProvider =
-    NotifierProvider<AuthRepository, AsyncValue<dynamic>>(() {
+    AutoDisposeNotifierProvider<AuthRepository, AsyncValue<dynamic>>(() {
   return AuthRepository();
 });

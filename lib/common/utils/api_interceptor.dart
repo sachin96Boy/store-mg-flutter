@@ -71,6 +71,14 @@ class ApiInterceptorNotifier extends Notifier<ApiInterceptor> {
     final sharedPrefLocal = ref.read(sharedPrefLocalProvider);
     return ApiInterceptor(sharedPrefLocal: sharedPrefLocal.asyncPrefs);
   }
+
+  Client getClientInterceptor() {
+    Client client = InterceptedClient.build(interceptors: [
+      state,
+    ]);
+
+    return client;
+  }
 }
 
 final apiInterceptorProvider =

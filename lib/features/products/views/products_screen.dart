@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:store_mg_fl/common/components/app_bar_user.dart';
 import 'package:store_mg_fl/common/styles/styles.dart';
+import 'package:store_mg_fl/features/products/providers/product_provider.dart';
 
 class ProductsScreen extends StatefulHookConsumerWidget {
   static const routeName = '/products';
@@ -15,6 +16,7 @@ class ProductsScreen extends StatefulHookConsumerWidget {
 class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
+    final productList = ref.watch(productProvider);
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(60.0), child: AppBarUser()),
@@ -24,11 +26,28 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
           ),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Text('products screen'),
-                ],
-              )
+              Expanded(
+                  child: SafeArea(
+                      top: false,
+                      bottom: false,
+                      child: productList.when(
+                        data: (products) {
+                          return GridView.builder(
+                            itemCount: products.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            itemBuilder: (context, index) =>
+                                Text(products[index].name),
+                          );
+                        },
+                        error: (error, stackTrace) {
+                          return Text(error.toString());
+                        },
+                        loading: () => Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )))
             ],
           )),
     );

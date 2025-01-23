@@ -5,7 +5,7 @@ import 'package:store_mg_fl/features/auth/dto/auth_response.dart';
 import 'package:store_mg_fl/features/auth/models/user_model.dart';
 import 'package:store_mg_fl/features/auth/providers/common_providers.dart';
 
-class AuthResponseNotifier extends AsyncNotifier<AuthResponse> {
+class AuthResponseNotifier extends AutoDisposeAsyncNotifier<AuthResponse> {
   static const USER = 'user';
   static const TOKEN = 'token';
 
@@ -72,6 +72,6 @@ class AuthResponseNotifier extends AsyncNotifier<AuthResponse> {
 }
 
 final authResponseProvider =
-    AsyncNotifierProvider<AuthResponseNotifier, AuthResponse>(() {
+    AutoDisposeAsyncNotifierProvider<AuthResponseNotifier, AuthResponse>(() {
   return AuthResponseNotifier();
 });
