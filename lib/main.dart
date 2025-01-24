@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const ProductsScreen(),
       routes: {
-        AuthScreen.routeName: (context) => const ProductsScreen(),
+        AuthScreen.routeName: (context) => const AuthScreen(),
         ProductsScreen.routeName: (context) => const ProductsScreen(),
       },
     );

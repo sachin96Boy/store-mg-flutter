@@ -76,7 +76,14 @@ class AuthResponseNotifier extends AutoDisposeAsyncNotifier<AuthResponse> {
   Future<void> logOut() async {
     final pref = ref.read(sharedPrefLocalProvider);
 
-    await pref.asyncPrefs.clear();
+    state = const AsyncValue.loading();
+
+    state = await AsyncValue.guard(() async {
+      await pref.asyncPrefs.clear();
+
+      final newResponse = await handleInitialAuth();
+      return newResponse;
+    });
   }
 }
 
