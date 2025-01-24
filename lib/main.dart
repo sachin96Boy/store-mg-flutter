@@ -30,8 +30,9 @@ class MyApp extends StatelessWidget {
         ),
         brightness: Brightness.light,
       ),
-      home: const AuthScreen(),
+      home: const ProductsScreen(),
       routes: {
+        AuthScreen.routeName: (context) => const ProductsScreen(),
         ProductsScreen.routeName: (context) => const ProductsScreen(),
       },
     );

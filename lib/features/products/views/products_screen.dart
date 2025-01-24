@@ -22,7 +22,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
 
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60.0), child: AppBarUser()),
+        preferredSize: Size.fromHeight(60.0),
+        child: AppBarUser(),
+      ),
       body: Container(
           decoration: BoxDecoration(
             gradient: ColorGradients().gradientBackground,

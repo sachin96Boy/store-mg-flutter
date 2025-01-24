@@ -5,6 +5,8 @@ import 'package:store_mg_fl/common/utils/apis.dart';
 import 'package:store_mg_fl/features/products/models/product_model.dart';
 
 class ProductDetailsPage extends HookConsumerWidget {
+  static const routeName = 'product-details';
+
   final ProductModel product;
 
   const ProductDetailsPage({super.key, required this.product});

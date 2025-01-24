@@ -56,8 +56,11 @@ class AuthResponseNotifier extends AutoDisposeAsyncNotifier<AuthResponse> {
 
     try {
       final user = await pref.asyncPrefs.getString(USER);
-      final userModel = UserModel.fromJson(json.decode(user!));
-      return userModel;
+      if (user != null) {
+        final userModel = UserModel.fromJson(json.decode(user));
+        return userModel;
+      }
+      return null;
     } catch (e) {
       return null;
     }
@@ -68,6 +71,12 @@ class AuthResponseNotifier extends AutoDisposeAsyncNotifier<AuthResponse> {
 
     final token = await pref.asyncPrefs.getString(TOKEN);
     return token;
+  }
+
+  Future<void> logOut() async {
+    final pref = ref.read(sharedPrefLocalProvider);
+
+    await pref.asyncPrefs.clear();
   }
 }
 

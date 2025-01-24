@@ -22,7 +22,7 @@ class ApiInterceptor implements InterceptorContract {
   @override
   Future<BaseRequest> interceptRequest({required BaseRequest request}) async {
     try {
-      final token = await sharedPrefLocal.getString('token');
+      final token = await sharedPrefLocal.getString('token') ?? '';
 
       request.headers[HttpHeaders.contentTypeHeader] = "application/json";
       request.headers[HttpHeaders.authorizationHeader] = "Bearer $token";
