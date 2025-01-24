@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:store_mg_fl/common/utils/apis.dart';
+import 'package:store_mg_fl/features/auth/providers/auth_provider.dart';
 import 'package:store_mg_fl/features/products/models/product_model.dart';
 
 class ProductItem extends HookConsumerWidget {
@@ -9,7 +10,7 @@ class ProductItem extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final imagePath = '${Api.pathUrl}${product.pictureURL}';
-
+    final auth = ref.watch(authResponseProvider);
     return GridTile(
       footer: GridTileBar(
         backgroundColor: Colors.black.withAlpha(200),
@@ -25,7 +26,19 @@ class ProductItem extends HookConsumerWidget {
           "USD ${product.price}",
           style: TextStyle(fontSize: 14),
         ),
-        trailing: IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
+        trailing: auth.when(
+          data: (auth) {
+            final data = auth.user != null
+                ? IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart))
+                : SizedBox();
+
+            return data;
+          },
+          error: (error, stackTrace) {
+            return Text(error.toString());
+          },
+          loading: () => Center(child: CircularProgressIndicator()),
+        ),
       ),
       child: Image.network(
         imagePath,
