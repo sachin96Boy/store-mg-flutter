@@ -18,6 +18,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     final productList = ref.watch(productProvider);
+    final orientation = MediaQuery.of(context).orientation;
+
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(60.0), child: AppBarUser()),
@@ -38,7 +40,12 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                             shrinkWrap: true,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2),
+                                    mainAxisSpacing: 4,
+                                    crossAxisSpacing: 4,
+                                    crossAxisCount:
+                                        orientation == Orientation.portrait
+                                            ? 2
+                                            : 3),
                             itemBuilder: (context, index) =>
                                 ProductItem(product: products[index]),
                           );
