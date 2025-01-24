@@ -25,10 +25,13 @@ class ProductDetailsPage extends HookConsumerWidget {
           children: [
             Padding(
               padding: EdgeInsets.only(bottom: 10),
-              child: Image.network(
-                '${Api.pathUrl}${product.pictureURL}',
-                width: orientation == Orientation.portrait ? 600 : 250,
-                height: orientation == Orientation.portrait ? 400 : 200,
+              child: Hero(
+                tag: product,
+                child: Image.network(
+                  '${Api.pathUrl}${product.pictureURL}',
+                  width: orientation == Orientation.portrait ? 600 : 250,
+                  height: orientation == Orientation.portrait ? 400 : 200,
+                ),
               ),
             ),
             Text(

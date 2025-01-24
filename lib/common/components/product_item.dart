@@ -49,9 +49,12 @@ class ProductItem extends HookConsumerWidget {
             loading: () => Center(child: CircularProgressIndicator()),
           ),
         ),
-        child: Image.network(
-          imagePath,
-          fit: BoxFit.cover,
+        child: Hero(
+          tag: product,
+          child: Image.network(
+            imagePath,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
