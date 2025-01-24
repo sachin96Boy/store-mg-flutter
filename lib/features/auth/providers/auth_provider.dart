@@ -5,7 +5,7 @@ import 'package:store_mg_fl/features/auth/dto/auth_response.dart';
 import 'package:store_mg_fl/features/auth/models/user_model.dart';
 import 'package:store_mg_fl/features/auth/providers/common_providers.dart';
 
-class AuthResponseNotifier extends AsyncNotifier<AuthResponse> {
+class AuthResponseNotifier extends AutoDisposeAsyncNotifier<AuthResponse> {
   static const USER = 'user';
   static const TOKEN = 'token';
 
@@ -56,8 +56,11 @@ class AuthResponseNotifier extends AsyncNotifier<AuthResponse> {
 
     try {
       final user = await pref.asyncPrefs.getString(USER);
-      final userModel = UserModel.fromJson(json.decode(user!));
-      return userModel;
+      if (user != null) {
+        final userModel = UserModel.fromJson(json.decode(user));
+        return userModel;
+      }
+      return null;
     } catch (e) {
       return null;
     }
@@ -69,9 +72,22 @@ class AuthResponseNotifier extends AsyncNotifier<AuthResponse> {
     final token = await pref.asyncPrefs.getString(TOKEN);
     return token;
   }
+
+  Future<void> logOut() async {
+    final pref = ref.read(sharedPrefLocalProvider);
+
+    state = const AsyncValue.loading();
+
+    state = await AsyncValue.guard(() async {
+      await pref.asyncPrefs.clear();
+
+      final newResponse = await handleInitialAuth();
+      return newResponse;
+    });
+  }
 }
 
 final authResponseProvider =
-    AsyncNotifierProvider<AuthResponseNotifier, AuthResponse>(() {
+    AutoDisposeAsyncNotifierProvider<AuthResponseNotifier, AuthResponse>(() {
   return AuthResponseNotifier();
 });
