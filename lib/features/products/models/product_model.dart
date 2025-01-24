@@ -16,7 +16,7 @@ class ProductModel {
       id: json['id'],
       name: json['name'],
       description: json['description'],
-      pictureURL: json['picture'] ?? "",
+      pictureURL: json['picture']['url'] ?? "",
       price: double.parse(json['price'].toString()));
 
   Map<String, dynamic> toJson() => {

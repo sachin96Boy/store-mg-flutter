@@ -23,7 +23,7 @@ class ProductRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
 
       final responseBody = json.decode(response.body) as Map<String, dynamic>;
       final body = responseBody['data'] as List<dynamic>;
-      print(body);
+
       if (response.statusCode == 200) {
         final productList = body.map((element) {
           final product = ProductModel.fromJson(element);

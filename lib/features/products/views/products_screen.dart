@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:store_mg_fl/common/components/app_bar_user.dart';
+import 'package:store_mg_fl/common/components/product_item.dart';
 import 'package:store_mg_fl/common/styles/styles.dart';
 import 'package:store_mg_fl/features/products/providers/product_provider.dart';
 
@@ -34,11 +35,12 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         data: (products) {
                           return GridView.builder(
                             itemCount: products.length,
+                            shrinkWrap: true,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2),
                             itemBuilder: (context, index) =>
-                                Text(products[index].name),
+                                ProductItem(product: products[index]),
                           );
                         },
                         error: (error, stackTrace) {
