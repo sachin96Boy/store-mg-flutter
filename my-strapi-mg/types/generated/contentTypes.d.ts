@@ -473,6 +473,7 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
 export interface ApiCartCart extends Struct.CollectionTypeSchema {
   collectionName: 'carts';
   info: {
+    description: '';
     displayName: 'cart';
     pluralName: 'carts';
     singularName: 'cart';
@@ -481,18 +482,17 @@ export interface ApiCartCart extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    cartItems: Schema.Attribute.JSON;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::cart.cart'> &
       Schema.Attribute.Private;
+    products: Schema.Attribute.Relation<'manyToMany', 'api::product.product'>;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    userId: Schema.Attribute.String;
   };
 }
 
@@ -571,6 +571,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    carts: Schema.Attribute.Relation<'manyToMany', 'api::cart.cart'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1050,10 +1051,10 @@ export interface PluginUsersPermissionsUser
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    cart_id: Schema.Attribute.String;
     confirmationToken: Schema.Attribute.String & Schema.Attribute.Private;
     confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     createdAt: Schema.Attribute.DateTime;

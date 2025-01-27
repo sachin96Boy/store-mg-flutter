@@ -46,7 +46,7 @@ class CartRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
 
       final cartProductsUrl = Uri.parse('${Api.carts}&userId=$userId');
 
-      final response = await client.patch(
+      await client.put(
         cartProductsUrl,
         body: updatedCartData.toJson(),
       );
