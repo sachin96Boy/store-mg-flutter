@@ -12,7 +12,7 @@ class CartRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
     return AsyncValue.data(null);
   }
 
-  Future<CartModel?> getCartItems(String userId) async {
+  Future<List<CartModel>?> getCartItems(String userId) async {
     try {
       final client =
           ref.read(apiInterceptorProvider.notifier).getClientInterceptor();
@@ -22,12 +22,15 @@ class CartRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
       final response = await client.get(cartProductsUrl);
 
       final responseBody = json.decode(response.body) as Map<String, dynamic>;
-      final body = responseBody['data'] as Map<String, dynamic>;
+      final body = responseBody['data'] as List<Map<String, dynamic>>;
 
       if (response.statusCode == 200) {
-        final cartProducts = CartModel.fromJson(body);
+        final cartitemsList = body.map((element) {
+          final cartProducts = CartModel.fromJson(element);
+          return cartProducts;
+        }).toList();
 
-        return cartProducts;
+        return cartitemsList;
       }
       return null;
     } on Exception catch (e) {

@@ -4,15 +4,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:store_mg_fl/features/cart/models/cart_model.dart';
 import 'package:store_mg_fl/features/cart/repository/cart_repository.dart';
 
-class CartNotifier extends AutoDisposeFamilyAsyncNotifier<CartModel?, String> {
+class CartNotifier
+    extends AutoDisposeFamilyAsyncNotifier<List<CartModel>?, String> {
   @override
-  Future<CartModel?> build(String arg) {
+  Future<List<CartModel>?> build(String arg) {
     // TODO: implement build
     final cartItem = getCartItems(arg);
     return cartItem;
   }
 
-  Future<CartModel?> getCartItems(String userId) async {
+  Future<List<CartModel>?> getCartItems(String userId) async {
     final cartItem =
         await ref.read(cartRepositoryProvider.notifier).getCartItems(userId);
     return cartItem;
@@ -32,8 +33,7 @@ class CartNotifier extends AutoDisposeFamilyAsyncNotifier<CartModel?, String> {
   }
 }
 
-final cartResponseProvider =
-    AutoDisposeFamilyAsyncNotifierProvider<CartNotifier, CartModel?, String>(
-        () {
+final cartProvider = AutoDisposeFamilyAsyncNotifierProvider<CartNotifier,
+    List<CartModel>?, String>(() {
   return CartNotifier();
 });

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:store_mg_fl/common/components/product_item.dart';
+import 'package:store_mg_fl/features/cart/models/cart_model.dart';
+import 'package:store_mg_fl/features/cart/providers/cart_provider.dart';
+import 'package:store_mg_fl/features/products/models/product_model.dart';
 
 class CartScreen extends StatefulHookConsumerWidget {
   static const routeName = '/cart';
@@ -11,8 +15,43 @@ class CartScreen extends StatefulHookConsumerWidget {
 }
 
 class _CartScreenState extends ConsumerState<CartScreen> {
+  handleCartItems(AsyncValue<List<CartModel>?> data, Orientation orientation) {
+    return data.when(
+      data: (data) {
+        if (data != null) {
+          final cartItemsList = data;
+          return GridView.builder(
+            itemCount: cartItemsList.length,
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+                crossAxisCount: orientation == Orientation.portrait ? 2 : 3),
+            itemBuilder: (context, index) => ProductItem(
+              product: ProductModel(
+                  id: cartItemsList[index].id,
+                  name: cartItemsList[index].title,
+                  description: cartItemsList[index].description,
+                  price: cartItemsList[index].price,
+                  pictureURL: cartItemsList[index].imageUrl),
+            ),
+          );
+        }
+      },
+      error: (error, stackTrace) {
+        return Text(error.toString());
+      },
+      loading: () => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cartItems = ref.watch(cartProvider);
+    final orientation = MediaQuery.of(context).orientation;
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -35,7 +74,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           ),
         ),
         body: TabBarView(children: [
-          Text('Credit Card'),
+          handleCartItems(cartItems, orientation),
           Text('Shopping Card'),
           Text('Receipt')
         ]),
