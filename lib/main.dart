@@ -4,6 +4,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:store_mg_fl/features/auth/views/auth_screen.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:store_mg_fl/features/cart/views/cart_screen.dart';
 import 'package:store_mg_fl/features/products/views/products_screen.dart';
 
 Future main() async {
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const ProductsScreen(),
       routes: {
+        CartScreen.routeName: (context) => const CartScreen(),
         AuthScreen.routeName: (context) => const AuthScreen(),
         ProductsScreen.routeName: (context) => const ProductsScreen(),
       },

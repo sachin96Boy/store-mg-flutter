@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:store_mg_fl/features/auth/providers/auth_provider.dart';
 import 'package:store_mg_fl/features/auth/views/auth_screen.dart';
+import 'package:store_mg_fl/features/cart/views/cart_screen.dart';
 
 class AppBarUser extends StatefulHookConsumerWidget {
   const AppBarUser({super.key});
@@ -44,7 +45,13 @@ class _AppBarUserState extends ConsumerState<AppBarUser> {
                     style: ShadTheme.of(context).textTheme.h3,
                   ),
                 ),
-          leading: response.user != null ? Icon(Icons.store) : SizedBox(),
+          leading: response.user != null
+              ? IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(CartScreen.routeName);
+                  },
+                  icon: Icon(Icons.store))
+              : SizedBox(),
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 12.0),

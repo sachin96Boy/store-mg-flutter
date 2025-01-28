@@ -9,4 +9,5 @@ class Api {
   static final String login = '$basuUrl/auth/local';
   static final String register = '$basuUrl/auth/local/register';
   static final String products = '$basuUrl/products?populate=*';
+  static final String carts = '$basuUrl/carts?populate=*';
 }
