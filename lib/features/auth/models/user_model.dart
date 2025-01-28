@@ -6,6 +6,7 @@ class UserModel {
   final String userName;
   final String email;
   final String provider;
+  final String cartId;
   final bool confirmed;
   final bool blocked;
   final DateTime createdAt;
@@ -16,6 +17,7 @@ class UserModel {
       required this.userName,
       required this.email,
       required this.provider,
+      required this.cartId,
       required this.confirmed,
       required this.blocked,
       required this.createdAt,
@@ -26,6 +28,7 @@ class UserModel {
         userName: json["username"],
         email: json["email"],
         provider: json["provider"],
+        cartId: json["cart_id"] ?? '',
         confirmed: json["confirmed"],
         blocked: json["blocked"],
         createdAt: DateTime.parse(json["createdAt"]),
@@ -37,6 +40,7 @@ class UserModel {
         "username": userName,
         "email": email,
         "provider": provider,
+        "cart_id": cartId,
         "confirmed": confirmed,
         "blocked": blocked,
         "createdAt": createdAt.toIso8601String(),

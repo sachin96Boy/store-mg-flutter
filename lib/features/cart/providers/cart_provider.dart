@@ -1,39 +1,39 @@
 import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:store_mg_fl/features/cart/models/cart_model.dart';
 import 'package:store_mg_fl/features/cart/repository/cart_repository.dart';
+import 'package:store_mg_fl/features/products/models/product_model.dart';
 
 class CartNotifier
-    extends AutoDisposeFamilyAsyncNotifier<List<CartModel>?, String> {
+    extends AutoDisposeFamilyAsyncNotifier<List<ProductModel>?, String> {
   @override
-  Future<List<CartModel>?> build(String arg) {
+  Future<List<ProductModel>?> build(String arg) {
     // TODO: implement build
     final cartItem = getCartItems(arg);
     return cartItem;
   }
 
-  Future<List<CartModel>?> getCartItems(String userId) async {
+  Future<List<ProductModel>?> getCartItems(String cartId) async {
     final cartItem =
-        await ref.read(cartRepositoryProvider.notifier).getCartItems(userId);
+        await ref.read(cartRepositoryProvider.notifier).getCartItems(cartId);
     return cartItem;
   }
 
-  Future<void> addCartItem(CartModel updatedCartData, String userId) async {
+  Future<void> addCartItem(ProductModel updatedCartData, String cartId) async {
     state = AsyncValue.loading();
 
     state = await AsyncValue.guard(() async {
       await ref
           .read(cartRepositoryProvider.notifier)
-          .addCartItems(updatedCartData, userId);
+          .addCartItems(updatedCartData, cartId);
 
-      final newResponse = await getCartItems(userId);
+      final newResponse = await getCartItems(cartId);
       return newResponse;
     });
   }
 }
 
 final cartProvider = AutoDisposeFamilyAsyncNotifierProvider<CartNotifier,
-    List<CartModel>?, String>(() {
+    List<ProductModel>?, String>(() {
   return CartNotifier();
 });

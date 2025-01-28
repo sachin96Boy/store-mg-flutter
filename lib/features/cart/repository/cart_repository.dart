@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:store_mg_fl/common/utils/api_interceptor.dart';
 import 'package:store_mg_fl/common/utils/apis.dart';
-import 'package:store_mg_fl/features/cart/models/cart_model.dart';
+import 'package:store_mg_fl/features/products/models/product_model.dart';
 
 class CartRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
   @override
@@ -12,21 +12,22 @@ class CartRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
     return AsyncValue.data(null);
   }
 
-  Future<List<CartModel>?> getCartItems(String userId) async {
+  Future<List<ProductModel>?> getCartItems(String cartId) async {
     try {
       final client =
           ref.read(apiInterceptorProvider.notifier).getClientInterceptor();
 
-      final cartProductsUrl = Uri.parse('${Api.carts}&userId=$userId');
+      final cartProductsUrl = Uri.parse('${Api.carts}/$cartId?populate=*');
 
       final response = await client.get(cartProductsUrl);
 
       final responseBody = json.decode(response.body) as Map<String, dynamic>;
-      final body = responseBody['data'] as List<Map<String, dynamic>>;
+      final body =
+          responseBody['data']['products'] as List<Map<String, dynamic>>;
 
       if (response.statusCode == 200) {
         final cartitemsList = body.map((element) {
-          final cartProducts = CartModel.fromJson(element);
+          final cartProducts = ProductModel.fromJson(element);
           return cartProducts;
         }).toList();
 
@@ -39,16 +40,22 @@ class CartRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
     }
   }
 
-  Future<void> addCartItems(CartModel updatedCartData, String userId) async {
+  Future<void> addCartItems(ProductModel updatedCartData, String cartId) async {
     try {
       final client =
           ref.read(apiInterceptorProvider.notifier).getClientInterceptor();
 
-      final cartProductsUrl = Uri.parse('${Api.carts}&userId=$userId');
+      final cartProductsUrl = Uri.parse('${Api.carts}/$cartId');
 
       await client.put(
         cartProductsUrl,
-        body: updatedCartData.toJson(),
+        body: {
+          "data": {
+            "products": {
+              "connect": [updatedCartData.toJson()]
+            }
+          }
+        },
       );
     } on Exception catch (e) {
       print(e);
