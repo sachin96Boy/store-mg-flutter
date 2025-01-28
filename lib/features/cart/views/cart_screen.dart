@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:store_mg_fl/common/components/product_item.dart';
-import 'package:store_mg_fl/features/cart/models/cart_model.dart';
 import 'package:store_mg_fl/features/cart/providers/cart_provider.dart';
 import 'package:store_mg_fl/features/products/models/product_model.dart';
 
