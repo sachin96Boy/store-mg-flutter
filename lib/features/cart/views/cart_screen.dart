@@ -15,7 +15,8 @@ class CartScreen extends StatefulHookConsumerWidget {
 }
 
 class _CartScreenState extends ConsumerState<CartScreen> {
-  handleCartItems(AsyncValue<List<CartModel>?> data, Orientation orientation) {
+  handleCartItems(
+      AsyncValue<List<ProductModel>?> data, Orientation orientation) {
     return data.when(
       data: (data) {
         if (data != null) {
@@ -28,12 +29,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 crossAxisSpacing: 4,
                 crossAxisCount: orientation == Orientation.portrait ? 2 : 3),
             itemBuilder: (context, index) => ProductItem(
-              product: ProductModel(
-                  id: cartItemsList[index].id,
-                  name: cartItemsList[index].title,
-                  description: cartItemsList[index].description,
-                  price: cartItemsList[index].price,
-                  pictureURL: cartItemsList[index].imageUrl),
+              product: cartItemsList[index],
             ),
           );
         }

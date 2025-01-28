@@ -71,6 +71,11 @@ class _ProductItemState extends ConsumerState<ProductItem> {
           child: Image.network(
             imagePath,
             fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Center(
+                child: Icon(Icons.dangerous),
+              );
+            },
           ),
         ),
       ),
