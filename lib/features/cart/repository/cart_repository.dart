@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:store_mg_fl/common/utils/api_interceptor.dart';
 import 'package:store_mg_fl/common/utils/apis.dart';
+import 'package:store_mg_fl/features/cart/providers/cart_provider.dart';
 import 'package:store_mg_fl/features/products/models/product_model.dart';
 
 class CartRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
@@ -42,17 +43,32 @@ class CartRepository extends AutoDisposeNotifier<AsyncValue<dynamic>> {
 
   Future<void> addCartItems(ProductModel updatedCartData, String cartId) async {
     try {
+      final availableCartItems = ref.watch(cartProvider);
+
+      var listOfCartDocIds;
+
       final client =
           ref.read(apiInterceptorProvider.notifier).getClientInterceptor();
 
       final cartProductsUrl = Uri.parse('${Api.carts}/$cartId');
+
+      availableCartItems.whenData((cartList) {
+        if (cartList != null) {
+          final existingCartItemsList = cartList.map((item) {
+            return item.documentId;
+          }).toList();
+
+          listOfCartDocIds = existingCartItemsList;
+        }
+      });
 
       await client.put(
         cartProductsUrl,
         body: {
           "data": {
             "products": {
-              "connect": [updatedCartData.toJson()]
+              "connect":
+                  json.encode([...listOfCartDocIds, updatedCartData.documentId])
             }
           }
         },
